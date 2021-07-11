@@ -78,6 +78,7 @@ class _AddScreenState extends State<AddScreen> {
     );
   }
 
+
   Widget horizontalLine() {
     return Container(height: 1, width: double.infinity, color: Colors.grey);
   }

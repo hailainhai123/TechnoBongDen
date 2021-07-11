@@ -194,7 +194,7 @@ class _SignUpPageState extends State<SignUpPage> {
         height: 50,
         width: 50,
         child: Image.asset(
-          "assets/images/ic_flame_warning.png",
+          "assets/images/ic_lamp.jpg",
           fit: BoxFit.cover,
         ),
       ),
@@ -287,8 +287,8 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Tên", _nameController),
         _entryField("SĐT", _phoneNumberController),
         _entryField("Địa chỉ", _addressController),
-        _dropDownPermission(),
-        _dropDownDepartment(),
+        // _dropDownPermission(),
+        // _dropDownDepartment(),
       ],
     );
   }
@@ -298,6 +298,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
+        color: Colors.white,
         height: height,
         child: Stack(
           children: <Widget>[

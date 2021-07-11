@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   String iduser;
   var status;
   String playerid = '';
+
   bool switchValue = false;
 
   final TextEditingController _emailController = TextEditingController();
@@ -449,7 +450,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 100,
         width: 100,
         child: Image.asset(
-          "assets/images/ic_flame_warning.png",
+          "assets/images/ic_lamp.jpg",
           fit: BoxFit.cover,
         ),
       ),

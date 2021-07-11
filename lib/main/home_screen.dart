@@ -4,6 +4,7 @@ import 'package:health_care/addWidget/add_patient_page.dart';
 import 'package:health_care/helper/bottom_navigation_bar.dart';
 import 'package:health_care/helper/constants.dart';
 import 'package:health_care/helper/shared_prefs_helper.dart';
+import 'package:health_care/living_home/living_home_page.dart';
 import 'package:health_care/main/department_list_screen.dart';
 import 'package:health_care/main/detail_page.dart';
 import 'package:health_care/main/detail_screen.dart';
@@ -82,34 +83,34 @@ class _HomeScreenState extends State<HomeScreen> {
           //   ),
           //   label: 'Cảnh báo',
           // ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.menu,
-            ),
-            label: 'Thiết bị',
-          ),
           // BottomNavigationBarItem(
           //   icon: Icon(
           //     Icons.meeting_room_outlined,
           //   ),
-          //   label: 'địa điểm',
+          //   label: 'Địa điểm',
           // ),
           // BottomNavigationBarItem(
           //   icon: Icon(
-          //     Icons.details,
+          //     Icons.menu,
           //   ),
-          //   label: 'Giám sát',
+          //   label: 'Thiết bị',
           // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.add),
-          //   label: 'Thêm',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(
-          //     Icons.account_box_outlined,
-          //   ),
-          //   label: 'Cá nhân',
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.details,
+            ),
+            label: 'Giám sát',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Thêm',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.account_box_outlined,
+            ),
+            label: 'Cá nhân',
+          ),
         ];
 
         items = [
@@ -169,14 +170,15 @@ class _HomeScreenState extends State<HomeScreen> {
           //   response: loginResponse,
           // ),
           // HomePage(),
-          // DeviceListScreen(),
           // DepartmentListScreen(),
-          TestScreen(),
-          // DetailScreen(),
-          // AddScreen(),
-          // UserProfilePage(
-          //   quyen: '1',
-          // ),
+          // DeviceListScreen(),
+          // LivingHomePage(),
+          DetailScreen(),
+          AddScreen(),
+          UserProfilePage(
+              switchValue: false
+          ),
+
         ];
         break;
       case 2:
@@ -185,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
           DetailPage(),
           AddPatientScreen(),
           UserProfilePage(
-            quyen: '1',
+            switchValue: false,
           ),
         ];
         break;

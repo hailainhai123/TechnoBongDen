@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:health_care/dialogWidget/edit_device_dialog.dart';
 import 'package:health_care/helper/models.dart';
 import 'package:health_care/helper/mqttClientWrapper.dart';
+import 'package:health_care/living_home/living_home_page.dart';
 import 'package:health_care/model/department.dart';
 import 'package:health_care/model/thietbi.dart';
 import 'package:health_care/response/device_response.dart';
@@ -53,7 +54,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     ThietBi t = ThietBi('', '', '', '', '', Constants.mac, '');
     pubTopic = LOGIN_DEVICE;
     publishMessage(pubTopic, jsonEncode(t));
-    showLoadingDialog();
+    // showLoadingDialog();
   }
 
   Future<void> publishMessage(String topic, String message) async {
@@ -140,11 +141,11 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         children: [
           buildTextLabel('STT', 1),
           verticalLine(),
-          buildTextLabel('Mã', 4),
+          buildTextLabel('Mã', 3),
           verticalLine(),
-          buildTextLabel('Nhiệt độ', 2),
+          buildTextLabel('Ảnh', 3),
           verticalLine(),
-          buildTextLabel('VỊ trí', 2),
+          buildTextLabel('Vị trí', 3),
           verticalLine(),
           buildTextLabel('Sửa', 1),
         ],
@@ -181,16 +182,9 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   Widget itemView(int index) {
     return InkWell(
       onTap: () async {
-        // selectedIndex = index;
-        // Department d = Department('', '', '', Constants.mac);
-        // pubTopic = GET_DEPARTMENT;
-        // publishMessage(pubTopic, jsonEncode(d));
-        // showLoadingDialog();
         navigatorPush(
             context,
-            DetailScreen(
-              madiadiem: tbs[index].madiadiem,
-            ));
+            LivingHomePage(),);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 1),
@@ -202,11 +196,11 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 children: [
                   buildTextData('${index + 1}', 1),
                   verticalLine(),
-                  buildTextData(tbs[index].matb, 4),
+                  buildTextData(tbs[index].matb, 3),
                   verticalLine(),
-                  buildTextData('${tbs[index].nguongcb}\u2103', 2),
+                  buildTextData('', 3),
                   verticalLine(),
-                  buildTextData('${tbs[index].vitri}', 2),
+                  buildTextData('${tbs[index].vitri}', 3),
                   verticalLine(),
                   buildEditBtn(index,1),
                 ],
@@ -224,49 +218,11 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       child: IconButton(
           icon: Icon(Icons.edit),
           onPressed: () async {
-            await showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    //this right here
-                    child: Container(
-                      child: Stack(
-                        children: [
-                          EditDeviceDialog(
-                            thietbi: tbs[selectedIndex],
-                            dropDownItems: dropDownItems,
-                            deleteCallback: (param) {
-                              getDevices();
-                            },
-                            updateCallback: (updatedDevice) {
-                              getDevices();
-                            },
-                          ),
-                          Positioned(
-                            right: 0.0,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                getDevices();
-                              },
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: CircleAvatar(
-                                  radius: 14.0,
-                                  backgroundColor: Colors.white,
-                                  child: Icon(Icons.close, color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                });
+            selectedIndex = index;
+            Department d = Department('', '', '', Constants.mac);
+            pubTopic = GET_DEPARTMENT;
+            publishMessage(pubTopic, jsonEncode(d));
+            showLoadingDialog();
           }),
       flex: flex,
     );

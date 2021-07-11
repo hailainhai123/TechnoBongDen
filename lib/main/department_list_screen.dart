@@ -47,7 +47,7 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
     Department department = Department('', '', '', Constants.mac);
     pubTopic = LOGIN_KHOA;
     publishMessage(pubTopic, jsonEncode(department));
-    showLoadingDialog();
+    // showLoadingDialog();
   }
 
   Future<void> publishMessage(String topic, String message) async {
@@ -122,11 +122,11 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
           verticalLine(),
           buildTextLabel('Mã', 3),
           verticalLine(),
-          buildTextLabel('Địa chỉ', 4),
+          buildTextLabel('Địa chỉ', 3),
           verticalLine(),
-          buildTextLabel('Sđt', 4),
+          buildTextLabel('Sđt', 3),
           verticalLine(),
-          buildTextLabel('Sửa', 1),
+          // buildTextLabel('Sửa', 1),
         ],
       ),
     );
@@ -161,11 +161,55 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
   Widget itemView(int index) {
     return InkWell(
       onTap: () async {
-        navigatorPush(
-            context,
-            DetailScreen(
-              madiadiem: departments[index].madiadiem,
-            ));
+        await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //this right here
+                child: Container(
+                  child: Stack(
+                    children: [
+                      EditDepartmentDialog(
+                        department: departments[index],
+                        editCallback: (department) {
+                          print(
+                              '_DepartmentListScreenState.itemView $department');
+                          getDepartments();
+                          // departments.removeAt(index);
+                          // departments.insert(index, department);
+                          // setState(() {});
+                        },
+                        deleteCallback: (a) {
+                          getDepartments();
+                          // departments.removeAt(index);
+                          // setState(() {});
+                        },
+                      ),
+                      Positioned(
+                        right: 0.0,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            getDepartments();
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: CircleAvatar(
+                              radius: 14.0,
+                              backgroundColor: Colors.white,
+                              child: Icon(Icons.close, color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 1),
@@ -180,11 +224,11 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
                   buildTextData(departments[index].madiadiem ?? '', 3),
                   verticalLine(),
                   buildTextData(
-                      departments[index].departmentDiachiDecode ?? '', 4),
+                      departments[index].departmentDiachiDecode ?? '', 3),
                   verticalLine(),
-                  buildTextData(departments[index].sdtdiadiem ?? '', 4),
+                  buildTextData(departments[index].sdtdiadiem ?? '', 3),
                   verticalLine(),
-                  buildEditBtn(index, 1),
+                  // buildEditBtn(index, 1),
                 ],
               ),
             ),
@@ -200,55 +244,6 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
       child: IconButton(
           icon: Icon(Icons.edit),
           onPressed: () async {
-            await showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    //this right here
-                    child: Container(
-                      child: Stack(
-                        children: [
-                          EditDepartmentDialog(
-                            department: departments[index],
-                            editCallback: (department) {
-                              print(
-                                  '_DepartmentListScreenState.itemView $department');
-                              getDepartments();
-                              // departments.removeAt(index);
-                              // departments.insert(index, department);
-                              // setState(() {});
-                            },
-                            deleteCallback: (a) {
-                              getDepartments();
-                              // departments.removeAt(index);
-                              // setState(() {});
-                            },
-                          ),
-                          Positioned(
-                            right: 0.0,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                getDepartments();
-                              },
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: CircleAvatar(
-                                  radius: 14.0,
-                                  backgroundColor: Colors.white,
-                                  child: Icon(Icons.close, color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                });
           }),
       flex: flex,
     );

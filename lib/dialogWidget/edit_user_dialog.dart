@@ -1,25 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:health_care/helper/constants.dart' as Constants;
 import 'package:health_care/helper/models.dart';
 import 'package:health_care/helper/mqttClientWrapper.dart';
 import 'package:health_care/helper/shared_prefs_helper.dart';
 import 'package:health_care/model/user.dart';
 
-import '../helper/constants.dart' as Constants;
-
 class EditUserDialog extends StatefulWidget {
   final User user;
-  final List<String> dropDownItems;
   final Function(dynamic) updateCallback;
   final Function(dynamic) deleteCallback;
+  final switchValue;
 
   const EditUserDialog({
     Key key,
     this.user,
-    this.dropDownItems,
     this.updateCallback,
     this.deleteCallback,
+    this.switchValue,
   }) : super(key: key);
 
   @override
@@ -28,11 +27,6 @@ class EditUserDialog extends StatefulWidget {
 
 class _EditUserDialogState extends State<EditUserDialog>
     with SingleTickerProviderStateMixin {
-  static const UPDATE_USER = 'updateuser';
-  static const DELETE_USER = 'deleteuser';
-  static const CHANGE_PASSWORD = 'updatepass';
-  static const GET_DEPARTMENT = 'loginkhoa';
-
   final scrollController = ScrollController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -85,15 +79,15 @@ class _EditUserDialogState extends State<EditUserDialog>
       return;
     }
     switch (pubTopic) {
-      case UPDATE_USER:
+      case Constants.UPDATE_USER:
+      case Constants.UPDATE_PARENT:
         widget.updateCallback(updatedUser);
         Navigator.pop(context);
         break;
-      case CHANGE_PASSWORD:
-        widget.updateCallback('changePassword');
+      case Constants.CHANGE_PASSWORD_USER:
         Navigator.pop(context);
         break;
-      case DELETE_USER:
+      case Constants.DELETE_PARENT:
         widget.deleteCallback('true');
         Navigator.pop(context);
         Navigator.pop(context);
@@ -223,8 +217,8 @@ class _EditUserDialogState extends State<EditUserDialog>
               //   TextInputType.text,
               //   departmentController,
               // ),
-              buildPermissionContainer('Quyền'),
-              widget.user.quyen == '1' ? Container() : buildDepartment(),
+              // buildPermissionContainer('Quyền'),
+              // widget.user.quyen == '1' ? Container() : buildDepartment(),
               deleteButton(),
               buildButton(),
             ],
@@ -255,9 +249,9 @@ class _EditUserDialogState extends State<EditUserDialog>
         children: [
           Expanded(
               child: Text(
-            label,
-            style: TextStyle(fontSize: 16),
-          )),
+                label,
+                style: TextStyle(fontSize: 16),
+              )),
           Expanded(
             child: dropDownPermission(),
           ),
@@ -292,12 +286,12 @@ class _EditUserDialogState extends State<EditUserDialog>
   }
 
   Widget buildTextField(
-    String labelText,
-    Icon prefixIcon,
-    TextInputType keyboardType,
-    TextEditingController controller, {
-    bool obscure = false,
-  }) {
+      String labelText,
+      Icon prefixIcon,
+      TextInputType keyboardType,
+      TextEditingController controller, {
+        bool obscure = false,
+      }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -308,7 +302,7 @@ class _EditUserDialogState extends State<EditUserDialog>
         keyboardType: keyboardType,
         autocorrect: false,
         enabled:
-            labelText == 'Username' || labelText == 'password' ? false : true,
+        labelText == 'Username' || labelText == 'password' ? false : true,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: labelText,
@@ -355,23 +349,20 @@ class _EditUserDialogState extends State<EditUserDialog>
             context: context,
             builder: (context) => AlertDialog(
               title: new Text(
-                'Xóa tài khoản ?',
+                'Xóa ?',
               ),
               actions: <Widget>[
                 new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    widget.deleteCallback('123');
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   child: new Text(
                     'Hủy',
                   ),
                 ),
                 new FlatButton(
                   onPressed: () {
-                    pubTopic = DELETE_USER;
-                    var u = User(Constants.mac, widget.user.user,
-                        widget.user.pass, '', '', '', '', '', '');
+                    pubTopic = Constants.DELETE_PARENT;
+                    var u = User(Constants.mac, emailController.text,
+                      widget.user.pass, '', '', '', '', '', '',);
                     publishMessage(pubTopic, jsonEncode(u));
                   },
                   child: new Text(
@@ -390,7 +381,7 @@ class _EditUserDialogState extends State<EditUserDialog>
               color: Colors.red,
             ),
             Text(
-              'Xóa tài khoản',
+              'Xóa',
               style: TextStyle(fontSize: 18, color: Colors.red),
             ),
           ],
@@ -422,11 +413,19 @@ class _EditUserDialogState extends State<EditUserDialog>
               onPressed: () {
                 switch (_tabController.index) {
                   case 0:
-                    pubTopic = UPDATE_USER;
-                    _tryEdit();
+                    if (widget.switchValue) {
+                      pubTopic = Constants.UPDATE_PARENT;
+                    } else {
+                      pubTopic = Constants.UPDATE_USER;
+                    }
+                    _tryEdit(pubTopic);
                     break;
                   case 1:
-                    pubTopic = CHANGE_PASSWORD;
+                    if (widget.switchValue) {
+                      pubTopic = Constants.CHANGE_PASSWORD_PARENT;
+                    } else {
+                      pubTopic = Constants.CHANGE_PASSWORD_USER;
+                    }
                     changePass();
                     break;
                 }
@@ -440,64 +439,7 @@ class _EditUserDialogState extends State<EditUserDialog>
     );
   }
 
-  Widget buildDepartment() {
-    return Container(
-      height: 44,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          10,
-        ),
-        border: Border.all(
-          color: Colors.green,
-        ),
-      ),
-      margin: const EdgeInsets.symmetric(
-        horizontal: 32,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text(
-              'Khoa',
-            ),
-          ),
-          Expanded(
-            child: dropdownDepartment(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget dropdownDepartment() {
-    return Container(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          hint: Text("Chọn khoa"),
-          value: currentSelectedValue,
-          isDense: true,
-          onChanged: (newValue) {
-            setState(() {
-              currentSelectedValue = newValue;
-            });
-            print(currentSelectedValue);
-          },
-          items: widget.dropDownItems.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _tryEdit() async {
+  Future<void> _tryEdit(String pubTopic) async {
     updatedUser = User(
       Constants.mac,
       emailController.text,
@@ -508,6 +450,7 @@ class _EditUserDialogState extends State<EditUserDialog>
       currentSelectedValue,
       permission,
       '',
+      // maph: emailController.text,
     );
     updatedUser.iduser = await sharedPrefsHelper.getStringValuesSF('iduser');
     publishMessage(pubTopic, jsonEncode(updatedUser));
@@ -524,11 +467,16 @@ class _EditUserDialogState extends State<EditUserDialog>
       currentSelectedValue,
       permission,
       '',
+      // maph: emailController.text,
     );
     updatedUser.passmoi = newPasswordController.text;
     updatedUser.iduser = await sharedPrefsHelper.getStringValuesSF('iduser');
-    ChangePassword changePassword = ChangePassword(updatedUser.user,
-        updatedUser.pass, updatedUser.passmoi, updatedUser.mac);
+    ChangePassword changePassword = ChangePassword(
+        updatedUser.user,
+        updatedUser.pass,
+        updatedUser.passmoi,
+        'updatedUser.maph',
+        updatedUser.mac);
     publishMessage(pubTopic, jsonEncode(changePassword));
   }
 
@@ -562,13 +510,15 @@ class ChangePassword {
   final String pass;
   final String passmoi;
   final String mac;
+  String maph;
 
-  ChangePassword(this.user, this.pass, this.passmoi, this.mac);
+  ChangePassword(this.user, this.pass, this.passmoi, this.maph, this.mac);
 
   Map<String, dynamic> toJson() => {
-        'user': user,
-        'pass': pass,
-        'passmoi': passmoi,
-        'mac': mac,
-      };
+    'user': user,
+    'pass': pass,
+    'passmoi': passmoi,
+    'mac': mac,
+    'maph': maph,
+  };
 }

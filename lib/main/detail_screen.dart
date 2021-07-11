@@ -6,6 +6,7 @@ import 'package:health_care/helper/config.dart';
 import 'package:health_care/helper/models.dart';
 import 'package:health_care/helper/mqttClientWrapper.dart';
 import 'package:health_care/helper/shared_prefs_helper.dart';
+import 'package:health_care/living_home/living_home_page.dart';
 import 'package:health_care/login/login_page.dart';
 import 'package:health_care/model/thietbi.dart';
 import 'package:health_care/navigator.dart';
@@ -129,8 +130,8 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget buildItem(ThietBi tb) {
     return GestureDetector(
       onTap: () {
-        _selectedDevice = tb.matb;
-        // navigatorPush(context, RollingDoor());
+        // _selectedDevice = tb.matb;
+        navigatorPush(context, LivingHomePage());
         // getProducts();
       },
       behavior: HitTestBehavior.translucent,

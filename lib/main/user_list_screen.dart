@@ -264,7 +264,7 @@ class _UserListScreenState extends State<UserListScreen> {
                     children: [
                       EditUserDialog(
                         user: users[selectedIndex],
-                        dropDownItems: dropDownItems,
+                        // dropDownItems: dropDownItems,
                         deleteCallback: (param) => {
                           getUsers(),
                           // removeUser(selectedIndex),

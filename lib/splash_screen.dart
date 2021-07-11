@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:health_care/helper/constants.dart' as Constants;
+import 'package:health_care/living_home/living_home_page.dart';
+import 'package:health_care/living_home/rolling_door_remote.dart';
 import 'package:health_care/login/login_page.dart';
 import 'package:health_care/navigator.dart';
 import 'package:health_care/test_screen.dart';
@@ -100,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
                               _serverUriController.text);
                         }
                         // navigatorPush(context, LoginPage());
-                        navigatorPush(context, TestScreen());
+                        navigatorPush(context, LivingHomePage());
                       },
                     ),
                   ),
